@@ -224,4 +224,91 @@
   width: calc(100% - 230px);
   padding: 20px 24px;
 }
+/* ====== Sidebar + Main layout fixes ====== */
+
+/* ensure sidebar is on top and fixed */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 40;
+  box-shadow: none;
+}
+
+/* main section must start after sidebar */
+.main-section {
+  margin-left: 230px;           /* same width as .sidebar */
+  width: calc(100% - 230px);
+  padding: 24px 28px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* topbar should be full width of main-section and aligned */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 6px;
+  margin-bottom: 18px;
+  background: transparent;     /* keep parent's card backgrounds */
+}
+
+/* keep header content vertically centered and not wrapped */
+.topbar .brand { display: flex; align-items: center; gap: 12px; }
+.topbar .brand .logo { flex: 0 0 auto; }
+.topbar .brand > div { display: flex; flex-direction: column; }
+
+/* Adjust summary container spacing so cards don't push everything down */
+.summary-container {
+  margin: 6px 0 18px 0;
+}
+
+/* main grid: ensure left and right columns align to top */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 360px; /* left main, right sidebar card column */
+  gap: 22px;
+  align-items: start;               /* IMPORTANT: align to top */
+}
+
+/* ensure left column takes content naturally */
+.left { min-width: 0; }
+
+/* right column card sizing & alignment */
+.right { display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
+
+/* ensure allocation card and quick card don't center vertically */
+.right .card { align-self: stretch; }
+
+/* Chart container - ensure it fits and is not centered by extra margins */
+.allocation-placeholder,
+.right .card svg,
+.right .card .recharts-wrapper {
+  width: 100% !important;
+  height: 220px !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Quick card - put it near top of right column */
+.card .quick {
+  margin-top: 0;
+}
+
+/* Table wrapper: full width inside left column */
+.table-container { width: 100%; }
+
+/* Footer: keep inside main section and not below sidebar */
+.footer { margin-top: 24px; }
+
+/* small responsive tweak for narrow screens */
+@media (max-width: 980px) {
+  .sidebar { position: relative; width: 100%; height: auto; }
+  .main-section { margin-left: 0; width: 100%; padding: 16px; }
+  .main { grid-template-columns: 1fr; }
+}
+
 
