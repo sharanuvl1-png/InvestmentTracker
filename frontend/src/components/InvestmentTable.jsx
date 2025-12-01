@@ -5,19 +5,34 @@ export default function InvestmentTable({ items=[], onUpdate=()=>{}, onRemove=()
     <div>
       <table className="table">
         <thead>
-          <tr><th>Name</th><th>Category</th><th>Invested</th><th>Current</th><th>Return %</th><th>Date</th><th>SIP</th><th>Tag</th><th>Notes</th><th>Actions</th></tr>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Invested</th>
+            <th>Current</th>
+            <th>Return %</th>
+            <th>ROI %</th>
+            <th>Date</th>
+            <th>SIP</th>
+            <th>Tag</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
         </thead>
         <tbody>
           {items.map(it=>{
-            const r = Number(it.current||0) - Number(it.invested||0);
-            const rp = it.invested ? ((r/it.invested)*100).toFixed(1) : "0.0";
+            const invested = Number(it.invested || 0);
+            const current = Number(it.current || 0);
+            const r = current - invested;
+            const rp = invested ? ((r / invested) * 100).toFixed(1) : "0.0";
             return (
               <tr key={it.id}>
-                <td>{it.name}</td>
+                <td style={{maxWidth:220,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}} title={it.name}>{it.name}</td>
                 <td>{it.category}</td>
-                <td>₹{Number(it.invested||0).toLocaleString()}</td>
-                <td>₹{Number(it.current||0).toLocaleString()}</td>
+                <td>₹{invested.toLocaleString()}</td>
+                <td>₹{current.toLocaleString()}</td>
                 <td style={{color: r>=0? "var(--success)":"var(--danger)"}}>{rp}%</td>
+                <td>{typeof it.roi !== "undefined" ? (it.roi || "-") : "-"}</td>
                 <td>{it.date || "-"}</td>
                 <td>₹{Number(it.sip||0).toLocaleString()}</td>
                 <td>{it.tag || "-"}</td>
@@ -30,7 +45,7 @@ export default function InvestmentTable({ items=[], onUpdate=()=>{}, onRemove=()
               </tr>
             )
           })}
-          {items.length===0 && <tr><td colSpan={10} style={{padding:18,textAlign:"center",color:"var(--muted)"}}>No investments yet — click Add Investment</td></tr>}
+          {items.length===0 && <tr><td colSpan={11} style={{padding:18,textAlign:"center",color:"var(--muted)"}}>No investments yet — click Add Investment</td></tr>}
         </tbody>
       </table>
     </div>
