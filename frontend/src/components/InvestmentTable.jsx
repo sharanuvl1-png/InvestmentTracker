@@ -2,8 +2,8 @@ import React from "react";
 
 export default function InvestmentTable({ items = [], onRemove = () => {}, onEdit = () => {}, onUpdate = () => {} }) {
   return (
-    <div className="table-wrapper">
-      <table className="table clean-table">
+    <div className="table-container">
+      <table className="modern-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -27,25 +27,23 @@ export default function InvestmentTable({ items = [], onRemove = () => {}, onEdi
             const invested = Number(it.investedTotal || it.invested || 0);
             const current = Number(it.displayCurrent || 0);
             const gain = current - invested;
-            const rp = invested ? ((gain / invested) * 100).toFixed(1) : "0.0";
+            const returnPerc = invested ? ((gain / invested) * 100).toFixed(1) : "0.0";
 
             return (
-              <tr key={it.id}>
-                <td className="text-ellipsis">{it.name}</td>
+              <tr key={it.id} className="modern-row">
+                <td className="ellipsis">{it.name}</td>
 
-                <td>
-                  <span className="badge">{it.category}</span>
-                </td>
+                <td><span className="pill cat-pill">{it.category}</span></td>
 
                 <td>₹{invested.toLocaleString()}</td>
                 <td>₹{current.toLocaleString()}</td>
 
-                <td style={{ color: gain >= 0 ? "var(--success)" : "var(--danger)", fontWeight: 600 }}>
+                <td className={gain >= 0 ? "profit-text" : "loss-text"}>
                   ₹{gain.toLocaleString()}
                 </td>
 
-                <td style={{ color: gain >= 0 ? "var(--success)" : "var(--danger)" }}>
-                  {rp}%
+                <td className={gain >= 0 ? "profit-text" : "loss-text"}>
+                  {returnPerc}%
                 </td>
 
                 <td>{it.roi || "-"}</td>
@@ -53,23 +51,25 @@ export default function InvestmentTable({ items = [], onRemove = () => {}, onEdi
                 <td>₹{Number(it.sip || 0).toLocaleString()}</td>
 
                 <td>
-                  {it.recurringType || "none"}
-                  {it.recurringType === "custom" && it.recurringInterval ? ` (${it.recurringInterval}m)` : ""}
+                  <span className="pill recur-pill">
+                    {it.recurringType || "none"}
+                    {it.recurringType === "custom" && it.recurringInterval ? ` (${it.recurringInterval}m)` : ""}
+                  </span>
                 </td>
 
-                <td>
-                  <span className="tag">{it.tag || "-"}</span>
+                <td><span className="pill tag-pill">{it.tag || "-"}</span></td>
+
+                <td className="ellipsis" title={it.notes || ""}>
+                  {it.notes || ""}
                 </td>
 
-                <td className="text-ellipsis" title={it.notes || ""}>{it.notes || ""}</td>
-
-                <td>
-                  <button className="btn-small" onClick={() => onEdit(it)}>Edit</button>
-                  <button className="btn-small" onClick={() => {
+                <td className="action-buttons">
+                  <button className="btn-mini" onClick={() => onEdit(it)}>Edit</button>
+                  <button className="btn-mini" onClick={() => {
                     const newNotes = prompt("Edit notes", it.notes || "");
                     if (newNotes !== null) onUpdate(it.id, { notes: newNotes });
                   }}>Notes</button>
-                  <button className="btn-small danger" onClick={() => onRemove(it.id)}>Delete</button>
+                  <button className="btn-mini danger" onClick={() => onRemove(it.id)}>Delete</button>
                 </td>
               </tr>
             );
@@ -77,7 +77,7 @@ export default function InvestmentTable({ items = [], onRemove = () => {}, onEdi
 
           {items.length === 0 && (
             <tr>
-              <td colSpan={13} className="empty-row">No investments yet — click Add Investment</td>
+              <td colSpan="13" className="empty-state">No investments yet — click Add Investment</td>
             </tr>
           )}
         </tbody>
