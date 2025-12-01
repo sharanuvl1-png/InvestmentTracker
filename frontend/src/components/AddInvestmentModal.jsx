@@ -1,18 +1,59 @@
 import React, { useState } from "react";
 
+const CATEGORY_OPTIONS = [
+  "Bonds",
+  "Kite (Stocks, MF, SGB)",
+  "NPS",
+  "PPF",
+  "SSS",
+  "PF",
+  "FD",
+  "ULIP",
+  "Gold Physical",
+  "Reliance Jewel",
+  "LIC",
+  "Car",
+  "Plot",
+  "Bikes",
+  "Others"
+];
+
 export default function AddInvestmentModal({ onClose, onSave }){
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("Mutual Funds");
+  const [category, setCategory] = useState(CATEGORY_OPTIONS[1]); // default Kite
   const [invested, setInvested] = useState("");
   const [current, setCurrent] = useState("");
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
   const [sip, setSip] = useState("");
   const [tag, setTag] = useState("long term");
+  const [roi, setRoi] = useState("");
 
   function submit(e){
     e.preventDefault();
-    onSave({ name, category, invested: Number(invested||0), current: Number(current||0), date, notes, sip: Number(sip||0), tag });
+
+    const investedNum = Number(invested || 0);
+    const currentNum = Number(current || 0);
+    const roiNum = Number(roi || 0);
+
+    // auto-calc current if current not provided but roi + date given
+    let autoCurrent = currentNum;
+    if ((!current || Number(current) === 0) && roiNum > 0 && date) {
+      const years = Math.max(0, (Date.now() - new Date(date).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+      autoCurrent = Number((investedNum * Math.pow(1 + roiNum / 100, years)).toFixed(2));
+    }
+
+    onSave({
+      name,
+      category,
+      invested: investedNum,
+      current: autoCurrent || currentNum,
+      date,
+      notes,
+      sip: Number(sip || 0),
+      tag,
+      roi: roiNum
+    });
   }
 
   return (
@@ -23,29 +64,25 @@ export default function AddInvestmentModal({ onClose, onSave }){
           <div className="form-row">
             <input className="input" placeholder="Name (e.g., HDFC Long Term)" value={name} onChange={e=>setName(e.target.value)} required />
           </div>
+
           <div className="form-row">
             <select className="input" value={category} onChange={e=>setCategory(e.target.value)}>
-              <option>Mutual Funds</option>
-              <option>Stocks</option>
-              <option>Fixed Deposits</option>
-              <option>Gold</option>
-              <option>Bonds</option>
-              <option>PPF</option>
-              <option>ULIP</option>
-              <option>Others</option>
+              {CATEGORY_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
+
           <div className="form-row">
             <input className="input" placeholder="Invested (INR)" type="number" value={invested} onChange={e=>setInvested(e.target.value)} />
-            <input className="input" placeholder="Current Value (INR)" type="number" value={current} onChange={e=>setCurrent(e.target.value)} />
+            <input className="input" placeholder="Current Value (INR) — leave blank to auto-calc" type="number" value={current} onChange={e=>setCurrent(e.target.value)} />
           </div>
 
           <div className="form-row">
             <input className="input" placeholder="Date of Investment" type="date" value={date} onChange={e=>setDate(e.target.value)} />
-            <input className="input" placeholder="SIP per month (INR)" type="number" value={sip} onChange={e=>setSip(e.target.value)} />
+            <input className="input" placeholder="Rate of Interest (%)" type="number" value={roi} onChange={e=>setRoi(e.target.value)} />
           </div>
 
           <div className="form-row">
+            <input className="input" placeholder="SIP per month (INR)" type="number" value={sip} onChange={e=>setSip(e.target.value)} />
             <select className="input" value={tag} onChange={e=>setTag(e.target.value)}>
               <option value="long term">long term</option>
               <option value="short term">short term</option>
