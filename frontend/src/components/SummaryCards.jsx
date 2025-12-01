@@ -2,22 +2,49 @@ import React from "react";
 
 export default function SummaryCards({ invested, current, profit }) {
   const profitPerc = invested ? (profit / invested) * 100 : 0;
+
+  const cards = [
+    {
+      title: "Total Invested",
+      value: invested,
+      color: "#111827"
+    },
+    {
+      title: "Current Value",
+      value: current,
+      color: "#111827"
+    },
+    {
+      title: "Profit / Loss",
+      value: profit,
+      info: `${profitPerc.toFixed(1)}%`,
+      color: profit >= 0 ? "#059669" : "#dc2626"
+    }
+  ];
+
   return (
-    <div className="card">
-      <div className="summary">
-        <div className="stat">
-          <div className="small-muted">Total Invested</div>
-          <div style={{ fontSize: 18, fontWeight: 700 }}>₹{Number(invested).toLocaleString()}</div>
+    <div className="summary-container">
+      {cards.map((c, idx) => (
+        <div className="summary-card" key={idx}>
+          <div className="summary-title">{c.title}</div>
+
+          <div 
+            className="summary-value" 
+            style={{ color: c.color }}
+          >
+            ₹{Number(c.value).toLocaleString()}
+            {c.info && (
+              <span 
+                className="summary-info"
+                style={{ color: c.color }}
+              >
+                {" "}
+                ({c.info})
+              </span>
+            )}
+          </div>
         </div>
-        <div className="stat">
-          <div className="small-muted">Current Value</div>
-          <div style={{ fontSize: 18, fontWeight: 700 }}>₹{Number(current).toLocaleString()}</div>
-        </div>
-        <div className="stat">
-          <div className="small-muted">Profit / Loss</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: profit >= 0 ? 'var(--success)' : 'var(--danger)' }}>₹{Number(profit).toLocaleString()} ({profitPerc.toFixed(1)}%)</div>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
