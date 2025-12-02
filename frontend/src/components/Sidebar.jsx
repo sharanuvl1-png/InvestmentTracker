@@ -1,3 +1,4 @@
+// frontend/src/components/Sidebar.jsx
 import React from "react";
 
 export default function Sidebar() {
@@ -5,7 +6,10 @@ export default function Sidebar() {
     <div className="sidebar">
       <div className="side-header">
         <div className="side-logo">MC</div>
-        <div className="side-title">MyCapital360</div>
+        <div>
+          <div className="side-title">MyCapital360</div>
+          <div className="side-sub">Personal Investment Tracker</div>
+        </div>
       </div>
 
       <nav className="side-nav">
