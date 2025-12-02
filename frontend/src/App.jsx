@@ -3,7 +3,7 @@ import SummaryCards from "./components/SummaryCards.jsx";
 import AddInvestmentModal from "./components/AddInvestmentModal.jsx";
 import InvestmentTable from "./components/InvestmentTable.jsx";
 import AllocationChart from "./components/AllocationChart.jsx";
-import Sidebar from "./components/Sidebar.jsx";   // ⭐ ADD THIS LINE
+import Sidebar from "./components/Sidebar.jsx";
 
 /**
  * Accurate recurring logic (Option B)
@@ -175,26 +175,20 @@ export default function App() {
     setShowModal(false);
   }
 
-  // ⭐⭐⭐ NEW UPDATED LAYOUT WITH SIDEBAR ⭐⭐⭐
+  // ⭐⭐⭐ FINAL CLEAN LAYOUT WITH SIDEBAR + TOPBAR ACTIONS ONLY ⭐⭐⭐
   return (
     <div className="app-wrapper">
-      
-      {/* LEFT SIDEBAR */}
+
       <Sidebar />
 
-      {/* MAIN CONTENT */}
       <div className="main-section">
 
+        {/* TOPBAR WITH ONLY CONTROLS (NO BRAND HERE) */}
         <header className="topbar">
-          <div className="brand">
-            <div className="logo">MC</div>
-            <div>
-              <div className="title">MyCapital360</div>
-              <div className="subtitle">Personal Investment Tracker</div>
-            </div>
-          </div>
 
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center", width: "100%" }}>
+
+            {/* FILTER */}
             <select value={filterTag} onChange={e => setFilterTag(e.target.value)} className="input">
               <option>All</option>
               <option>long term</option>
@@ -203,6 +197,7 @@ export default function App() {
               <option>retirement</option>
             </select>
 
+            {/* SORT */}
             <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="input">
               <option value="none">Sort: None</option>
               <option value="return">Sort: Return %</option>
@@ -211,13 +206,17 @@ export default function App() {
               <option value="roi">Sort: ROI %</option>
             </select>
 
-            <button className="btn" onClick={() => { setEditItem(null); setShowModal(true); }}>Add Investment</button>
+            {/* ACTIONS — right aligned */}
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
+              <button className="btn" onClick={() => { setEditItem(null); setShowModal(true); }}>Add Investment</button>
+            </div>
           </div>
         </header>
 
         <main className="main">
           <section className="left">
             <SummaryCards invested={totals.invested} current={totals.current} profit={profit} />
+
             <div className="card">
               <InvestmentTable items={filtered} onUpdate={updateItem} onRemove={removeItem} onEdit={handleEdit} />
             </div>
@@ -231,7 +230,16 @@ export default function App() {
 
             <div className="card" style={{ marginTop: 14 }}>
               <h4 style={{ marginTop: 0 }}>Quick</h4>
-              <button className="btn-ghost" onClick={() => { if (!confirm("Clear all?")) return; localStorage.removeItem("mc360:items"); window.location.reload(); }}>Clear All</button>
+              <button
+                className="btn-ghost"
+                onClick={() => {
+                  if (!confirm("Clear all?")) return;
+                  localStorage.removeItem("mc360:items");
+                  window.location.reload();
+                }}
+              >
+                Clear All
+              </button>
             </div>
           </aside>
         </main>
@@ -246,7 +254,6 @@ export default function App() {
 
         <footer className="footer">Local only • Data stored in your browser</footer>
       </div>
-
     </div>
   );
 }
